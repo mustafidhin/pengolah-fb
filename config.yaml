@@ -1,0 +1,14 @@
+source_page_id: "123"
+destination_page_id: ""
+access_token: ""
+poll_interval_seconds: 300
+fetch_limit: 5
+processing:
+  prepend_text: "Ringkasan: "
+  append_text: "\n\nSumber: {permalink}"
+  shorten: true
+  strip_urls: true
+  hashtags: ["contoh", "monitor"]
+state_db_path: "data/state.sqlite3"
+dry_run: true
+graph_api_version: "v19.0"

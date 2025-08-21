@@ -1,0 +1,41 @@
+# Facebook Page Monitor configuration
+# Rename this to config.yaml and fill with your values.
+
+# Required: numeric ID of the source Page to monitor (NOT a personal profile)
+source_page_id: "123456789012345"
+
+# Optional: numeric ID of the destination Page where to repost
+# Leave empty to skip reposting.
+destination_page_id: ""
+
+# Access token with appropriate scopes/permissions.
+# You can also set FB_ACCESS_TOKEN env var instead of this field.
+access_token: ""
+
+# Poll every N seconds
+poll_interval_seconds: 300
+
+# Number of most recent posts to fetch on each poll
+fetch_limit: 10
+
+# Processing options for generating the new message
+processing:
+  # prepend/append templates can use {source_page_name} and {permalink}
+  prepend_text: "Ringkasan dari {source_page_name}: "
+  append_text: "\n\nSumber: {permalink}"
+  # If true, try to shorten the text to the first 600 characters
+  shorten: true
+  # Remove URLs from the body before templating
+  strip_urls: true
+  # Add hashtags at the end
+  hashtags: ["berita", "update"]
+
+# Storage path
+state_db_path: "data/state.sqlite3"
+
+# Behavior flags
+# If true, do not actually publish to destination even if configured
+dry_run: true
+
+# Graph API version to use
+graph_api_version: "v19.0"
