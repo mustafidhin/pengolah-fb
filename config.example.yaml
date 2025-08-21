@@ -30,6 +30,15 @@ processing:
   # Add hashtags at the end
   hashtags: ["berita", "update"]
 
+# Media download options
+media:
+  enabled: true
+  download_dir: "data/media"
+  max_bytes: 10485760  # 10 MB per file
+  # e.g. ["image/jpeg", "image/png", "video/mp4"]. Empty means allow any.
+  allowed_types: []
+  timeout_seconds: 30
+
 # Storage path
 state_db_path: "data/state.sqlite3"
 

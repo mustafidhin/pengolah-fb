@@ -10,6 +10,7 @@ Important notes:
 - Polling-based checker for new posts on a source Page
 - Simple content processing (sanitization and templated rewording)
 - Local SQLite persistence to avoid duplicates
+- Media extraction and local download (images/videos) to `data/media`
 - Dry-run mode for safe testing
 - Docker support
 
@@ -38,6 +39,11 @@ python -m src.main --config config.yaml --once --dry-run
 ```bash
 python -m src.main --config config.yaml
 ```
+
+### Media handling
+- The app will attempt to extract media URLs from post attachments and download them locally to `media.download_dir`.
+- Current repost behavior publishes text and optional link. Uploading media to a Page feed requires different endpoints/permissions and is not enabled by default.
+- Configure limits and types in `media` section of config.
 
 ### Environment variables
 You may omit `access_token` in the config and set `FB_ACCESS_TOKEN` environment variable instead.

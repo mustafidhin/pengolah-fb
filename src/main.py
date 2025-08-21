@@ -6,6 +6,7 @@ from .config import load_config
 from .fb_api import FacebookClient, GraphApiError
 from .storage import StateStore
 from .processor import build_message
+from .media import extract_media_urls, download_media_files, MediaConfigLike
 
 
 def handle_once(config_path: str, once: bool, dry_run_flag: bool | None) -> None:
@@ -47,14 +48,32 @@ def handle_once(config_path: str, once: bool, dry_run_flag: bool | None) -> None
                 hashtags=cfg.processing.hashtags or [],
             )
 
+            # Media handling
+            saved_media_paths: List[str] = []
+            if cfg.media.enabled:
+                media_urls = extract_media_urls(post)
+                if media_urls:
+                    media_cfg_like = MediaConfigLike(
+                        download_dir=cfg.media.download_dir,
+                        max_bytes=cfg.media.max_bytes,
+                        allowed_types=cfg.media.allowed_types,
+                        timeout_seconds=cfg.media.timeout_seconds,
+                    )
+                    saved_media_paths = download_media_files(media_urls, media_cfg_like)
+
             if cfg.destination_page_id and not cfg.dry_run:
                 try:
+                    # For now we only publish text+link. Uploading media to Pages requires different endpoints/permissions.
                     client.create_page_post(cfg.destination_page_id, message=final_message, link=permalink or None)
-                    print(f"Reposted {post_id} -> {cfg.destination_page_id}")
+                    print(f"Reposted {post_id} -> {cfg.destination_page_id} (media saved: {len(saved_media_paths)})")
                 except GraphApiError as e:
                     print(f"Failed to post {post_id}: {e}")
             else:
                 print("[DRY RUN] Would post:\n" + final_message + "\n---")
+                if saved_media_paths:
+                    print(f"[DRY RUN] Saved media files ({len(saved_media_paths)}):")
+                    for p in saved_media_paths:
+                        print(f" - {p}")
 
             store.mark_seen([post_id])
 

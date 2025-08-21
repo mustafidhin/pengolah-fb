@@ -38,7 +38,10 @@ class FacebookClient:
         return self._request("GET", f"/{page_id}", params={"fields": fields})
 
     def get_page_posts(self, page_id: str, limit: int = 10) -> List[Dict[str, Any]]:
-        fields = "id,message,created_time,permalink_url,attachments{media_type,media,url},status_type"
+        fields = (
+            "id,message,created_time,permalink_url,"
+            "attachments{media_type,media,url,subattachments},status_type"
+        )
         data = self._request("GET", f"/{page_id}/posts", params={"fields": fields, "limit": limit})
         return data.get("data", [])
 

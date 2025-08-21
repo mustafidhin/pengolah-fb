@@ -14,6 +14,15 @@ class ProcessingConfig:
 
 
 @dataclass
+class MediaConfig:
+    enabled: bool = True
+    download_dir: str = "data/media"
+    max_bytes: int = 10 * 1024 * 1024
+    allowed_types: Optional[List[str]] = None
+    timeout_seconds: int = 30
+
+
+@dataclass
 class AppConfig:
     source_page_id: str
     destination_page_id: str = ""
@@ -21,6 +30,7 @@ class AppConfig:
     poll_interval_seconds: int = 300
     fetch_limit: int = 10
     processing: ProcessingConfig = field(default_factory=ProcessingConfig)
+    media: MediaConfig = field(default_factory=MediaConfig)
     state_db_path: str = "data/state.sqlite3"
     dry_run: bool = True
     graph_api_version: str = "v19.0"
@@ -39,6 +49,15 @@ def load_config(path: str) -> AppConfig:
         hashtags=list(processing_data.get("hashtags", []) or []),
     )
 
+    media_data = data.get("media", {}) or {}
+    media = MediaConfig(
+        enabled=bool(media_data.get("enabled", True)),
+        download_dir=str(media_data.get("download_dir", "data/media")),
+        max_bytes=int(media_data.get("max_bytes", 10 * 1024 * 1024)),
+        allowed_types=list(media_data.get("allowed_types", []) or []),
+        timeout_seconds=int(media_data.get("timeout_seconds", 30)),
+    )
+
     access_token = os.environ.get("FB_ACCESS_TOKEN", data.get("access_token", ""))
 
     config = AppConfig(
@@ -48,6 +67,7 @@ def load_config(path: str) -> AppConfig:
         poll_interval_seconds=int(data.get("poll_interval_seconds", 300)),
         fetch_limit=int(data.get("fetch_limit", 10)),
         processing=processing,
+        media=media,
         state_db_path=str(data.get("state_db_path", "data/state.sqlite3")),
         dry_run=bool(data.get("dry_run", True)),
         graph_api_version=str(data.get("graph_api_version", "v19.0")),

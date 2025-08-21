@@ -9,6 +9,12 @@ processing:
   shorten: true
   strip_urls: true
   hashtags: ["contoh", "monitor"]
+media:
+  enabled: true
+  download_dir: "data/media"
+  max_bytes: 10485760
+  allowed_types: []
+  timeout_seconds: 30
 state_db_path: "data/state.sqlite3"
 dry_run: true
 graph_api_version: "v19.0"
